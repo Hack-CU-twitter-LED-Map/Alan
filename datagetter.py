@@ -22,10 +22,13 @@ class StreamListener(tweepy.StreamListener):
 					try:
 						table.insert(dict(text=status.text, location = city))
 						jsono=status._json
-						print(jsono["text"])
-						#print(jsono["display_text_range"])
-						#print(jsono["entities"])
-						#print(status._json)
+						if jsono['truncated']:
+							print("#############################################################")
+							print("testing full text")
+							print(jsono['full_text'])
+							print("#############################################################")
+						else:
+							print(jsono['text'])
 					except:
 						print("failed to add")
 						pass
