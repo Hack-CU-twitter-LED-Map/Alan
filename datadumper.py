@@ -37,18 +37,20 @@ def scorer(tweet, location):
         if i in ignorew:
             continue
         elif i in posw:
-            positive+=1
+        	print('pos word:', i, 'for', location)
+        	positive += 1
         elif i in negw:
-            negative-=1
+        	print('neg word:', i, 'for', location)
+        	negative += 1
     if positive>negative:
         value = 1
     if negative>positive:
         value = -1
     if location in city_scores:
-    	print("adding another tweet value")
+    	print("adding another tweet value", value)
     	city_scores[location].append(value)
     else:
-    	print('adding new city')
+    	print('adding new city', value)
     	city_scores[location] = [value]
 
 #creating empty arrays to hold good, bad, and ignore words from text files
@@ -88,25 +90,38 @@ def main():
 	#continuously update the tweets.csv file
 	while True:
 
+		
 		#delete the old csv file if present
+		'''
 		try:
 			os.remove("tweets.csv")
 		except:
 			pass
+		'''
 
+		
 		#dump the database into the csv file
+		'''
 		database = dataset.connect("sqlite:///tweets.db")
 
 		result = database["tweets"].all()
 
 		freeze(result, format='csv', filename="tweets.csv")
+		'''
 
 		#analyze each line in the csv file
 		csvReader()
 
+		avg_city_scores = {}
+
+		for key, value in city_scores.items():
+			print(value)
+			avg_city_scores[key] = sum(value)/ float(len(value))
+
+		print(avg_city_scores)
 		#erase the database tweets table
-		table = database["tweets"]
-		table.delete()
+		#table = database["tweets"]
+		#table.delete()
 
 		#wait for five minutes, then redo the above code
 		time.sleep(300.0)
