@@ -128,9 +128,9 @@ def dumper():
             else:
                 s = 4
             scores += str(s)
-            scores += '\n'
         else:
-            scores += '2\n'
+            scores += '2'
+    print("updated scores.txt")
 
     with open('scores.txt', 'w') as file:
         file.write(scores)
@@ -158,7 +158,7 @@ class StreamListener(tweepy.StreamListener):
     
     def on_status(self, status):
         global time_start
-        if ((time.time() - time_start) >600):
+        if ((time.time() - time_start) >30):
             dumper()
             time_start = time.time()
 		#overriding the listener class method "on_status" to focus on tweets sent, not dm's or deleting tweets
