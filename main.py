@@ -130,7 +130,7 @@ def dumper():
             scores += str(s)
             scores += '\n'
         else:
-            scores += '0\n'
+            scores += '2\n'
 
     with open('scores.txt', 'w') as file:
         file.write(scores)
