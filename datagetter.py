@@ -1,12 +1,12 @@
 import tweepy
 import dataset
 import os
-import simplejson as json
-
+import json
+from html.parser import HTMLParser
 database = dataset.connect("sqlite:///tweets.db")
 table = database["tweets"]
 
-
+count=0
 #List of cities to check against status.user.location
 cities = ["Denver", "Colorado Springs", "Aurora", "Fort Collins", "Lakewood", "Thorton", "Pueblo", "Arvada", "Westminster", "Centennial", "Boulder"]
 
@@ -22,13 +22,16 @@ class StreamListener(tweepy.StreamListener):
 					try:
 						table.insert(dict(text=status.text, location = city))
 						jsono= status._json
-						if True:
-							print("#############################################################")
-							print("testing full text")
-							print(jsono)
-							print("#############################################################")
+						print(jsono["user"]["name"])
+						print("@",jsono["user"]["screen_name"])
+						if jsono["truncated"]:
+							print("")
+							print("Said: ",jsono["extended_tweet"]["full_text"])
 						else:
-							print(jsono['text'])
+							print("Said: ",jsono["text"])
+						print("from, ", jsono["user"]["location"])
+						print("")
+						print("")
 					except:
 						print("failed to add")
 						pass
