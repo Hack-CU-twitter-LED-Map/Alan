@@ -19,7 +19,15 @@ def csvReader():
         for row in reader:
             cleaned_tweet = process(row[1])
             tweetloc = row[2]
-            scorer(cleaned_tweet, tweetloc)
+            print("said:", cleaned_tweet, "in", tweetloc)
+            score = scorer(cleaned_tweet, tweetloc)
+            if (score == 0):
+            	print("nuetral")
+            elif (score == -1):
+            	print("negative")
+            else:
+            	print("positive")
+            print('\n')
 
 #removes punctuation and lowercases a tweet
 def process(raw_tweet):
@@ -37,21 +45,18 @@ def scorer(tweet, location):
         if i in ignorew:
             continue
         elif i in posw:
-        	print('pos word:', i, 'for', location)
         	positive += 1
         elif i in negw:
-        	print('neg word:', i, 'for', location)
         	negative += 1
     if positive>negative:
         value = 1
     if negative>positive:
         value = -1
     if location in city_scores:
-    	print("adding another tweet value", value)
     	city_scores[location].append(value)
     else:
-    	print('adding new city', value)
     	city_scores[location] = [value]
+    return value
 
 #creating empty arrays to hold good, bad, and ignore words from text files
 posw =[None]* 2012
@@ -92,22 +97,20 @@ def main():
 
 		
 		#delete the old csv file if present
-		'''
+		
 		try:
 			os.remove("tweets.csv")
 		except:
 			pass
-		'''
-
 		
 		#dump the database into the csv file
-		'''
+		
 		database = dataset.connect("sqlite:///tweets.db")
 
 		result = database["tweets"].all()
 
 		freeze(result, format='csv', filename="tweets.csv")
-		'''
+		
 
 		#analyze each line in the csv file
 		csvReader()
@@ -115,16 +118,17 @@ def main():
 		avg_city_scores = {}
 
 		for key, value in city_scores.items():
-			print(value)
 			avg_city_scores[key] = sum(value)/ float(len(value))
-
+		print("###########################################")
 		print(avg_city_scores)
+		
+		city_scores.clear()
 		#erase the database tweets table
-		#table = database["tweets"]
-		#table.delete()
+		table = database["tweets"]
+		table.delete()
 
 		#wait for five minutes, then redo the above code
-		time.sleep(300.0)
+		time.sleep(30)
 
     
 
