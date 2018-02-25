@@ -5,7 +5,10 @@ import time
 import re 
 import csv
 
+#dictionary of cities and their tweet values
+city_scores = dict()
 
+#parses a csv file of tweets and locations
 def csvReader():
     with open('tweets.csv', 'r') as file:
         has_header = csv.Sniffer().has_header(file.read(1024))
@@ -16,16 +19,19 @@ def csvReader():
         for row in reader:
             cleaned_tweet = process(row[1])
             tweetloc = row[2]
-            scorer(cleaned_tweet, location)
+            scorer(cleaned_tweet, tweetloc)
 
+#removes punctuation and lowercases a tweet
 def process(raw_tweet):
     raw_tweet= re.sub(r'[^\w\s]','',raw_tweet)
     raw_tweet=raw_tweet.lower()
     return raw_tweet
 
+#scores a tweet based on the number of positive and negative words it contains
 def scorer(tweet, location):
     positive=0
     negative=0
+    value = 0
     tweet=tweet.split()
     for i in tweet:
         if i in ignorew:
@@ -35,19 +41,24 @@ def scorer(tweet, location):
         elif i in negw:
             negative-=1
     if positive>negative:
-        return 1
+        value = 1
     if negative>positive:
-        return -1
+        value = -1
+    if location in city_scores:
+    	print("adding another tweet value")
+    	city_scores[location].append(value)
     else:
-        return 0
+    	print('adding new city')
+    	city_scores[location] = [value]
 
-
-
+#creating empty arrays to hold good, bad, and ignore words from text files
 posw =[None]* 2012
 negw= [None]* 2020
 ignorew =[None]*51
-count = 0
 
+
+count = 0
+#adding the good words
 f=open("poswords.txt", "r")
 for l in f:
     l=l.strip()
@@ -55,7 +66,7 @@ for l in f:
     count+=1
 f.close()
 count=0
-
+#adding the bad words
 f= open("negwords.txt")
 for l in f:
     l=l.strip()
@@ -63,7 +74,7 @@ for l in f:
     count+=1
 f.close()
 count=0
-
+#adding the ignore words
 f=open("ignoreWords.txt")
 for l in f:
     l=l.strip()
@@ -72,26 +83,32 @@ for l in f:
 f.close()
 
 def main(): 
+	
 
-    
-
+	#continuously update the tweets.csv file
 	while True:
+
+		#delete the old csv file if present
 		try:
 			os.remove("tweets.csv")
 		except:
 			pass
 
+		#dump the database into the csv file
 		database = dataset.connect("sqlite:///tweets.db")
 
 		result = database["tweets"].all()
 
 		freeze(result, format='csv', filename="tweets.csv")
 
+		#analyze each line in the csv file
 		csvReader()
 
+		#erase the database tweets table
 		table = database["tweets"]
 		table.delete()
 
+		#wait for five minutes, then redo the above code
 		time.sleep(300.0)
 
     
