@@ -1,7 +1,7 @@
 import tweepy
 import dataset
 import os
-import simplejson
+import simplejson as json
 
 database = dataset.connect("sqlite:///tweets.db")
 table = database["tweets"]
@@ -21,11 +21,11 @@ class StreamListener(tweepy.StreamListener):
 				if city in status.user.location:
 					try:
 						table.insert(dict(text=status.text, location = city))
-						jsono=status._json
-						if jsono['truncated']:
+						jsono= status._json
+						if True:
 							print("#############################################################")
 							print("testing full text")
-							print(jsono['full_text'])
+							print(jsono)
 							print("#############################################################")
 						else:
 							print(jsono['text'])
