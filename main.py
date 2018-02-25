@@ -5,8 +5,32 @@ import json
 from html.parser import HTMLParser
 database = dataset.connect("sqlite:///tweets.db")
 table = database["tweets"]
+def process(raw_tweet):
+    raw_tweet= re.sub(r'[^\w\s]','',raw_tweet)
+    raw_tweet=raw_tweet.lower()
+    return raw_tweet
+def scorer(tweet, location):
+    positive=0
+    negative=0
+    value = 0
+    tweet=tweet.split()
+    for i in tweet:
+        if i in ignorew:
+            continue
+        elif i in posw:
+        	positive += 1
+        elif i in negw:
+        	negative += 1
+    if positive>negative:
+        value = 1
+    if negative>positive:
+        value = -1
+    if location in city_scores:
+    	city_scores[location].append(value)
+    else:
+    	city_scores[location] = [value]
+    return value
 
-count=0
 #List of cities to check against status.user.location
 cities = ["Denver", "Colorado Springs", "Aurora", "Fort Collins", "Lakewood", "Thorton", "Pueblo", "Arvada", "Westminster", "Centennial", "Boulder"]
 
@@ -25,10 +49,24 @@ class StreamListener(tweepy.StreamListener):
 						print(jsono["user"]["name"])
 						print("@",jsono["user"]["screen_name"])
 						if jsono["truncated"]:
+                            print("Said: ",jsono["extended_tweet"]["full_text"])
+                            tweet=jsono["extended_tweet"]["full_text"]
+                            tweet=process(tweet)
+                            score=scorer(tweet)
+                            if score>0:
+                                print("Evaluation: Positive")
+                            else:
+                                print("Evaluation: Negative")
 							print("")
-							print("Said: ",jsono["extended_tweet"]["full_text"])
 						else:
 							print("Said: ",jsono["text"])
+                            tweet=jsono["text"]
+                            tweet=process(tweet)
+                            score=scorer(tweet)
+                            if score>0:
+                                print("Evaluation: Positive")
+                            else:
+                                print("Evaluation: Negative")
 						print("from, ", jsono["user"]["location"])
 						print("")
 						print("")
@@ -64,15 +102,3 @@ stream_listener = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=stream_listener, tweet_mode='extended')
 
 stream.filter(locations = ColoradoGeoBox, languages=["en"])
-
-
-
-
-
-
-
-
-
-
-
-
