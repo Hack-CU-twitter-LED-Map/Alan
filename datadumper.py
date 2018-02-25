@@ -93,42 +93,38 @@ def main():
 	
 
 	#continuously update the tweets.csv file
-	while True:
-
-		
-		#delete the old csv file if present
-		
-		try:
-			os.remove("tweets.csv")
-		except:
-			pass
+    while True:
 		
 		#dump the database into the csv file
 		
-		database = dataset.connect("sqlite:///tweets.db")
+        database = dataset.connect("sqlite:///tweets.db")
 
-		result = database["tweets"].all()
+        result = database["tweets"].all()
 
-		freeze(result, format='csv', filename="tweets.csv")
-		
+        #tweets.db can not be empty at this point!
+        freeze(result, format='csv', filename="tweets.csv")
 
 		#analyze each line in the csv file
-		csvReader()
+        csvReader()
 
-		avg_city_scores = {}
+        avg_city_scores = {}
 
-		for key, value in city_scores.items():
-			avg_city_scores[key] = sum(value)/ float(len(value))
-		print("###########################################")
-		print(avg_city_scores)
+        for key, value in city_scores.items():
+            avg_city_scores[key] = sum(value)/ float(len(value))
+        print("###########################################")
+        print(avg_city_scores)
 		
-		city_scores.clear()
+        city_scores.clear()
 		#erase the database tweets table
-		table = database["tweets"]
-		table.delete()
+        table = database["tweets"]
+        table.delete()
 
-		#wait for five minutes, then redo the above code
-		time.sleep(30)
+        try:
+            os.delete("tweets.csv")
+        except:
+            pass
+        #wait for five minutes, then redo the above code
+        time.sleep(30)
 
     
 
