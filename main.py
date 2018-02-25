@@ -50,23 +50,9 @@ class StreamListener(tweepy.StreamListener):
                         print("@",jsono["user"]["screen_name"])
                         if jsono["truncated"]:
                             print("Said: ",jsono["extended_tweet"]["full_text"])
-                            tweet=jsono["extended_tweet"]["full_text"]
-                            tweet=process(tweet)
-                            score=scorer(tweet)
-                            if score>0:
-                                print("Evaluation: Positive")
-                            else:
-                                print("Evaluation: Negative")
                             print("")
                         else:
                             print("Said: ",jsono["text"])
-                            tweet=jsono["text"]
-                            tweet=process(tweet)
-                            score=scorer(tweet)
-                            if score>0:
-                                print("Evaluation: Positive")
-                            else:
-                                print("Evaluation: Negative")
                         print("from, ", jsono["user"]["location"])
                         print("")
                         print("")
