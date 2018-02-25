@@ -1,6 +1,7 @@
 import tweepy
 import dataset
 import os
+import simplejson
 
 database = dataset.connect("sqlite:///tweets.db")
 table = database["tweets"]
@@ -20,7 +21,11 @@ class StreamListener(tweepy.StreamListener):
 				if city in status.user.location:
 					try:
 						table.insert(dict(text=status.text, location = city))
-						print(status.text)
+						jsono=status._json
+						print(jsono["text"])
+						#print(jsono["display_text_range"])
+						#print(jsono["entities"])
+						#print(status._json)
 					except:
 						print("failed to add")
 						pass
@@ -50,7 +55,7 @@ api = tweepy.API(auth)
 
 stream_listener = StreamListener()
 
-stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
+stream = tweepy.Stream(auth=api.auth, listener=stream_listener, tweet_mode='extended')
 
 stream.filter(locations = ColoradoGeoBox, languages=["en"])
 

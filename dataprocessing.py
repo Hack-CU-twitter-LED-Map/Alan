@@ -13,7 +13,7 @@ def main():
     positive=0
     negative=0
     posw =[None]* 2012
-    negw= [None]* 2018
+    negw= [None]* 2020
     ignorew =[None]*51
     count =0
     test_string= "#IWasOnTheDanceFloorWhen re-creating that jump-and-lift scene from Dirty Dancing seemed like a fun idea. Nope, wasn't...but I did meet some rather nice paramedics"
