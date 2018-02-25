@@ -36,19 +36,19 @@ cities = ["Denver", "Colorado Springs", "Aurora", "Fort Collins", "Lakewood", "T
 
 class StreamListener(tweepy.StreamListener):
 	
-	def on_status(self, status):
+    def on_status(self, status):
 		#overriding the listener class method "on_status" to focus on tweets sent, not dm's or deleting tweets
-		if status.retweeted:
-			return
-		if status.user.location:
-			for city in cities:
-				if city in status.user.location:
-					try:
-						table.insert(dict(text=status.text, location = city))
-						jsono= status._json
-						print(jsono["user"]["name"])
-						print("@",jsono["user"]["screen_name"])
-						if jsono["truncated"]:
+        if status.retweeted:
+            return
+        if status.user.location:
+            for city in cities:
+                if city in status.user.location:
+                    try:
+                        table.insert(dict(text=status.text, location = city))
+                        jsono= status._json
+                        print(jsono["user"]["name"])
+                        print("@",jsono["user"]["screen_name"])
+                        if jsono["truncated"]:
                             print("Said: ",jsono["extended_tweet"]["full_text"])
                             tweet=jsono["extended_tweet"]["full_text"]
                             tweet=process(tweet)
@@ -57,9 +57,9 @@ class StreamListener(tweepy.StreamListener):
                                 print("Evaluation: Positive")
                             else:
                                 print("Evaluation: Negative")
-							print("")
-						else:
-							print("Said: ",jsono["text"])
+                            print("")
+                        else:
+                            print("Said: ",jsono["text"])
                             tweet=jsono["text"]
                             tweet=process(tweet)
                             score=scorer(tweet)
@@ -67,18 +67,18 @@ class StreamListener(tweepy.StreamListener):
                                 print("Evaluation: Positive")
                             else:
                                 print("Evaluation: Negative")
-						print("from, ", jsono["user"]["location"])
-						print("")
-						print("")
-					except:
-						print("failed to add")
-						pass
+                        print("from, ", jsono["user"]["location"])
+                        print("")
+                        print("")
+                    except:
+                        print("failed to add")
+                        pass
 
-	def on_error(self, status_code):
-		if (status_code == 420):
-			#we're being rate limited!
-			print("rate limited")
-			return False
+def on_error(self, status_code):
+        if (status_code == 420):
+            #we're being rate limited!
+            print("rate limited")
+            return False
 
 #GeoBox location with coordinates in CSV format
 #Created with http://boundingbox.klokantech.com/
